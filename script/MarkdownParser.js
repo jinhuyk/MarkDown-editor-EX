@@ -20,7 +20,10 @@ var TagType;
     TagType[TagType["Header1"] = 1] = "Header1";
     TagType[TagType["Header2"] = 2] = "Header2";
     TagType[TagType["Header3"] = 3] = "Header3";
-    TagType[TagType["HorizontalRule"] = 4] = "HorizontalRule";
+    TagType[TagType["Header4"] = 4] = "Header4";
+    TagType[TagType["Header5"] = 5] = "Header5";
+    TagType[TagType["Header6"] = 6] = "Header6";
+    TagType[TagType["HorizontalRule"] = 7] = "HorizontalRule";
 })(TagType || (TagType = {}));
 class TagTypeToHtml {
     // readonly 를 사용하면 인스턴스가 만들어 지고 난 뒤 클래스 어디에서도 다시 만들 수 없다.
@@ -29,6 +32,9 @@ class TagTypeToHtml {
         this.tagType.set(TagType.Header1, "h1");
         this.tagType.set(TagType.Header2, "h2");
         this.tagType.set(TagType.Header3, "h3");
+        this.tagType.set(TagType.Header4, "h4");
+        this.tagType.set(TagType.Header5, "h5");
+        this.tagType.set(TagType.Header6, "h6");
         this.tagType.set(TagType.Paragraph, "p");
         this.tagType.set(TagType.HorizontalRule, "hr");
     }
@@ -101,6 +107,21 @@ class Header2Visitor extends VisitorBase {
 class Header3Visitor extends VisitorBase {
     constructor() {
         super(TagType.Header3, new TagTypeToHtml());
+    }
+}
+class Header4Visitor extends VisitorBase {
+    constructor() {
+        super(TagType.Header4, new TagTypeToHtml());
+    }
+}
+class Header5Visitor extends VisitorBase {
+    constructor() {
+        super(TagType.Header5, new TagTypeToHtml());
+    }
+}
+class Header6Visitor extends VisitorBase {
+    constructor() {
+        super(TagType.Header6, new TagTypeToHtml());
     }
 }
 class ParagraphVisitor extends VisitorBase {
@@ -195,6 +216,21 @@ class Header3ChainHandler extends ParseChainHandler {
         super(document, "### ", new Header3Visitor());
     }
 }
+class Header4ChainHandler extends ParseChainHandler {
+    constructor(document) {
+        super(document, "#### ", new Header4Visitor());
+    }
+}
+class Header5ChainHandler extends ParseChainHandler {
+    constructor(document) {
+        super(document, "##### ", new Header5Visitor());
+    }
+}
+class Header6ChainHandler extends ParseChainHandler {
+    constructor(document) {
+        super(document, "###### ", new Header6Visitor());
+    }
+}
 class HorizontalRuleHandler extends ParseChainHandler {
     constructor(document) {
         super(document, "--- ", new HorizontalRuleVisitor());
@@ -205,11 +241,17 @@ class ChainOfResponsibilityFactory {
         let header1 = new Header1ChainHandler(document);
         let header2 = new Header2ChainHandler(document);
         let header3 = new Header3ChainHandler(document);
+        let header4 = new Header4ChainHandler(document);
+        let header5 = new Header5ChainHandler(document);
+        let header6 = new Header6ChainHandler(document);
         let horizontalRule = new HorizontalRuleHandler(document);
         let paragraph = new ParagraphHandler(document);
         header1.SetNext(header2);
         header2.SetNext(header3);
-        header3.SetNext(horizontalRule);
+        header3.SetNext(header4);
+        header4.SetNext(header5);
+        header5.SetNext(header6);
+        header6.SetNext(horizontalRule);
         horizontalRule.SetNext(paragraph);
         return header1;
     }

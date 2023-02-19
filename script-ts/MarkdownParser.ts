@@ -20,6 +20,9 @@ enum TagType{
     Header1,
     Header2,
     Header3,
+    Header4,
+    Header5,
+    Header6,
     HorizontalRule
 }
 
@@ -31,6 +34,9 @@ class TagTypeToHtml{
         this.tagType.set(TagType.Header1, "h1");
         this.tagType.set(TagType.Header2, "h2");
         this.tagType.set(TagType.Header3, "h3");
+        this.tagType.set(TagType.Header4, "h4");
+        this.tagType.set(TagType.Header5, "h5");
+        this.tagType.set(TagType.Header6, "h6");
         this.tagType.set(TagType.Paragraph, "p");
         this.tagType.set(TagType.HorizontalRule, "hr");
     }
@@ -118,6 +124,21 @@ class Header2Visitor extends VisitorBase{
 class Header3Visitor extends VisitorBase{
     constructor(){
         super(TagType.Header3, new TagTypeToHtml());
+    }
+}
+class Header4Visitor extends VisitorBase{
+    constructor(){
+        super(TagType.Header4, new TagTypeToHtml());
+    }
+}
+class Header5Visitor extends VisitorBase{
+    constructor(){
+        super(TagType.Header5, new TagTypeToHtml());
+    }
+}
+class Header6Visitor extends VisitorBase{
+    constructor(){
+        super(TagType.Header6, new TagTypeToHtml());
     }
 }
 class ParagraphVisitor extends VisitorBase{
@@ -218,6 +239,21 @@ class Header3ChainHandler extends ParseChainHandler{
         super(document, "### ",new Header3Visitor());
     }
 }
+class Header4ChainHandler extends ParseChainHandler{
+    constructor(document: IMarkdownDocument){
+        super(document, "#### ",new Header4Visitor());
+    }
+}
+class Header5ChainHandler extends ParseChainHandler{
+    constructor(document: IMarkdownDocument){
+        super(document, "##### ",new Header5Visitor());
+    }
+}
+class Header6ChainHandler extends ParseChainHandler{
+    constructor(document: IMarkdownDocument){
+        super(document, "###### ",new Header6Visitor());
+    }
+}
 class HorizontalRuleHandler extends ParseChainHandler{
     constructor(document: IMarkdownDocument){
         super(document, "--- ",new HorizontalRuleVisitor());
@@ -229,11 +265,17 @@ class ChainOfResponsibilityFactory{
         let header1 : Header1ChainHandler = new Header1ChainHandler(document);
         let header2 : Header2ChainHandler = new Header2ChainHandler(document);
         let header3 : Header3ChainHandler = new Header3ChainHandler(document);
+        let header4 : Header4ChainHandler = new Header4ChainHandler(document);
+        let header5 : Header5ChainHandler = new Header5ChainHandler(document);
+        let header6 : Header6ChainHandler = new Header6ChainHandler(document);
         let horizontalRule: HorizontalRuleHandler = new HorizontalRuleHandler(document);
         let paragraph : ParagraphHandler = new ParagraphHandler(document);
         header1.SetNext(header2);
         header2.SetNext(header3);
-        header3.SetNext(horizontalRule);
+        header3.SetNext(header4);
+        header4.SetNext(header5);
+        header5.SetNext(header6);
+        header6.SetNext(horizontalRule);
         horizontalRule.SetNext(paragraph);
 
         return header1;
